@@ -90,14 +90,6 @@
 (defvar myrddin-mode-constants
   '("true" "false" "void"))
 
-(defvar myrddin-mode-special-types
-  '("void" "bool" "char" "byte"
-    "int8" "uint8"
-    "int16" "uint16"
-    "int32" "uint32"
-    "int64" "uint64"
-    "int" "uint"
-    "flt32" "flt64"))
 (defvar myrddin-mode-block-keywords
   '("elif" "else" "for" "if" "match" "struct" "trait" "while"))
 
