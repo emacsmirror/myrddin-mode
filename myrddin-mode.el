@@ -151,5 +151,8 @@
   (setq comment-start "/*")
   (setq comment-end "*/"))
 
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.myr\\'" . myrddin-mode))
+
 (provide 'myrddin-mode)
 ;;; myrddin-mode.el ends here
