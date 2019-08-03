@@ -98,6 +98,8 @@
     "int64" "uint64"
     "int" "uint"
     "flt32" "flt64"))
+(defvar myrddin-mode-block-keywords
+  '("elif" "else" "for" "if" "match" "struct" "trait" "while"))
 
 (defconst myrddin-mode-identifier-rx
   '(and (or alpha ?_)
@@ -137,6 +139,41 @@
 
 
 ;;;
+;;; Indentation.
+;;;
+
+(defun myrddin-mode-indent-line ()
+  (interactive)
+  (let* ((prev-level (save-excursion
+                       (previous-line)
+                       (back-to-indentation)
+                       (/ (current-column) myrddin-indent-offset)))
+         (prev-line (save-excursion
+                      (previous-line)
+                      (back-to-indentation)
+                      (buffer-substring-no-properties
+                       (line-beginning-position)
+                       (line-end-position)))))
+    (let ((indent
+           (save-excursion
+             (back-to-indentation)
+             (cond
+              ((looking-at
+                (rx (or "}" ";;" "elif" "else")))
+               (max 0 (* myrddin-indent-offset (1- prev-level))))
+              ((string-match-p
+                (rx (eval (cons 'or (cons "{" myrddin-mode-block-keywords))))
+                prev-line)
+               (* myrddin-indent-offset (1+ prev-level)))
+              (t (* myrddin-indent-offset prev-level))))))
+
+      (when indent
+        (if (<= (current-column) (current-indentation))
+            (indent-line-to indent)
+          (save-excursion (indent-line-to indent)))))))
+
+
+;;;
 ;;; Mode declaration.
 ;;;
 
@@ -147,7 +184,7 @@
   :syntax-table myrddin-mode-syntax-table
   (setq-local font-lock-defaults '(myrddin-mode-font-lock-keywords
                                    nil nil nil nil))
-
+  (setq-local indent-line-function 'myrddin-mode-indent-line)
   (setq comment-start "/*")
   (setq comment-end "*/"))
 
