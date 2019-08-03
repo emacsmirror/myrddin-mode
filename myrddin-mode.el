@@ -27,6 +27,17 @@
 
 ;;; Code:
 
+(defgroup myrddin-mode nil
+  "Support for Myrddin code."
+  :link '(url-link "https://git.sr.ht/~jakob/myrddin-mode")
+  :group 'languages)
+
+(defcustom myrddin-indent-offset 8
+  "Indent Myrddin code by this number of spaces."
+  :type 'integer
+  :group 'myrddin-mode
+  :safe #'integerp)
+
 
 ;;;
 ;;; Syntax tables.
@@ -132,8 +143,7 @@
 ;;;###autoload
 (define-derived-mode myrddin-mode prog-mode "Myrdin"
   "Major mode for Myrddin code."
-  ;; \\{rust-mode-map}"
-  ;; :group 'myrddin-mode
+  :group 'myrddin-mode
   :syntax-table myrddin-mode-syntax-table
   (setq-local font-lock-defaults '(myrddin-mode-font-lock-keywords
                                    nil nil nil nil))
