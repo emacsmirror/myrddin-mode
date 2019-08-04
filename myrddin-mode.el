@@ -4,7 +4,7 @@
 
 ;; Author: Jakob L. Kreuze <zerodaysfordays@sdf.lonestar.org>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24.0"))
+;; Package-Requires: ((emacs "24.3"))
 ;; Keywords: languages
 ;; URL: https://git.sr.ht/~jakob/myrddin-mode
 
@@ -30,7 +30,7 @@
 
 (require 'rx)
 
-(defgroup myrddin-mode nil
+(defgroup myrddin nil
   "Support for Myrddin code."
   :link '(url-link "https://git.sr.ht/~jakob/myrddin-mode")
   :group 'languages)
@@ -38,7 +38,7 @@
 (defcustom myrddin-indent-offset 8
   "Indent Myrddin code by this number of spaces."
   :type 'integer
-  :group 'myrddin-mode
+  :group 'myrddin
   :safe #'integerp)
 
 
@@ -73,7 +73,7 @@
 ;;; Font locking.
 ;;;
 
-(defvar myrddin-mode-keywords
+(defconst myrddin-mode-keywords
   '("$noret"
     "break"
     "const" "continue"
@@ -90,21 +90,24 @@
     "var"
     "while"))
 
-(defvar myrddin-mode-constants
+(defconst myrddin-mode-constants
   '("true" "false" "void"))
 
-(defvar myrddin-mode-block-keywords
+(defconst myrddin-mode-block-keywords
   '("elif" "else" "for" "if" "match" "struct" "trait" "while"))
 
 (defconst myrddin-mode-identifier-rx
   '(and (or alpha ?_)
-        (one-or-more (or alnum ?_))))
+        (one-or-more (or alnum ?_)))
+  "`rx' expression matching a Myrddin identifier.")
 
 (defconst myrddin-mode-type-name-rx
   '(and
     (eval myrddin-mode-identifier-rx)
     (optional (or (and ?[ (zero-or-more any) ?])
-                  ?#))))
+                  ?#)))
+  "`rx' expression matching a Myrddin type specification.
+Some examples include \"int\", \"foo#\", and \"foo[:]\".")
 
 (defconst myrddin-mode-variable-declaration-regexp
   (rx
@@ -138,6 +141,8 @@
 ;;;
 
 (defun myrddin-mode-indent-line ()
+  "Indent current line for Myrddin mode.
+Return the amount the indentation changed by."
   (interactive)
   (let* ((prev-level (save-excursion
                        (previous-line)
@@ -162,10 +167,10 @@
                (* myrddin-indent-offset (1+ prev-level)))
               (t (* myrddin-indent-offset prev-level))))))
 
-      (when indent
-        (if (<= (current-column) (current-indentation))
-            (indent-line-to indent)
-          (save-excursion (indent-line-to indent)))))))
+      (if (<= (current-column) (current-indentation))
+          (indent-line-to indent)
+        (save-excursion (indent-line-to indent)))
+      indent)))
 
 
 ;;;
@@ -175,7 +180,7 @@
 ;;;###autoload
 (define-derived-mode myrddin-mode prog-mode "Myrdin"
   "Major mode for Myrddin code."
-  :group 'myrddin-mode
+  :group 'myrddin
   :syntax-table myrddin-mode-syntax-table
   (setq-local font-lock-defaults '(myrddin-mode-font-lock-keywords
                                    nil nil nil nil))
