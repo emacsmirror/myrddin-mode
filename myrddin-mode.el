@@ -4,7 +4,8 @@
 
 ;; Author: Jakob L. Kreuze <zerodaysfordays@sdf.lonestar.org>
 ;; Version: 0.1
-;; Keywords: faces files languages myrddin
+;; Package-Requires: ((emacs "24.0"))
+;; Keywords: languages
 ;; URL: https://git.sr.ht/~jakob/myrddin-mode
 
 ;; This program is free software; you can redistribute it and/or modify
