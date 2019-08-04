@@ -93,40 +93,28 @@
 (defconst myrddin-mode-constants
   '("true" "false" "void"))
 
-(defconst myrddin-mode-block-keywords
-  '("elif" "else" "for" "if" "match" "struct" "trait" "while"))
-
-(defconst myrddin-mode-identifier-rx
-  '(and (or alpha ?_)
-        (one-or-more (or alnum ?_)))
-  "`rx' expression matching a Myrddin identifier.")
-
-(defconst myrddin-mode-type-name-rx
-  '(and
-    (eval myrddin-mode-identifier-rx)
-    (optional (or (and ?[ (zero-or-more any) ?])
-                  ?#)))
-  "`rx' expression matching a Myrddin type specification.
-Some examples include \"int\", \"foo#\", and \"foo[:]\".")
-
-(defconst myrddin-mode-variable-declaration-regexp
+(defvar myrddin-mode-variable-declaration-regexp
   (rx
    (and (or "const" "var" "generic")
         (zero-or-more (or "extern" "pkglocal" "#noret"))
         (and (one-or-more whitespace)
              (group
               symbol-start
-              (eval myrddin-mode-identifier-rx)
+              (or alpha ?_)
+              (one-or-more (or alnum ?_))
               symbol-end)))))
 
-(defconst myrddin-mode-type-specification-regexp
+(defvar myrddin-mode-type-specification-regexp
   (rx
    (and (or ?: "->")
         (zero-or-more whitespace)
-        (group (eval myrddin-mode-type-name-rx)))))
+        (group (or alpha ?_)
+               (one-or-more (or alnum ?_))
+               (optional (or (and ?\[ (zero-or-more any) ?\])
+                             ?#))))))
 
-(defconst myrddin-mode-label-regexp
-  (rx (and ?: (eval myrddin-mode-identifier-rx) symbol-end)))
+(defvar myrddin-mode-label-regexp
+  (rx (and ?: (or alpha ?_) (one-or-more (or alnum ?_)) symbol-end)))
 
 (defvar myrddin-mode-font-lock-keywords
   `((,(regexp-opt myrddin-mode-keywords 'symbols) . font-lock-keyword-face)
@@ -145,11 +133,11 @@ Some examples include \"int\", \"foo#\", and \"foo[:]\".")
 Return the amount the indentation changed by."
   (interactive)
   (let* ((prev-level (save-excursion
-                       (previous-line)
+                       (forward-line -1)
                        (back-to-indentation)
                        (/ (current-column) myrddin-indent-offset)))
          (prev-line (save-excursion
-                      (previous-line)
+                      (forward-line -1)
                       (back-to-indentation)
                       (buffer-substring-no-properties
                        (line-beginning-position)
@@ -162,7 +150,8 @@ Return the amount the indentation changed by."
                 (rx (or "}" ";;" "elif" "else")))
                (max 0 (* myrddin-indent-offset (1- prev-level))))
               ((string-match-p
-                (rx (eval (cons 'or (cons "{" myrddin-mode-block-keywords))))
+                (rx (or "{" "elif" "else" "for" "if" "match"
+                        "struct" "trait" "while"))
                 prev-line)
                (* myrddin-indent-offset (1+ prev-level)))
               (t (* myrddin-indent-offset prev-level))))))
