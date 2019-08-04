@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'rx)
+
 (defgroup myrddin-mode nil
   "Support for Myrddin code."
   :link '(url-link "https://git.sr.ht/~jakob/myrddin-mode")
