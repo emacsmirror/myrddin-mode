@@ -119,12 +119,12 @@
 
 (defvar myrddin-mode-type-specification-regexp
   (rx
-   (and (or ?{ "const" "var" "generic")
-        (zero-or-more (not newline))
-        (eval myrddin-mode-identifier-rx)
-        (zero-or-more whitespace)
-        ?:
-        (zero-or-more whitespace)
+   (and (or (and "->"
+                 (zero-or-more whitespace))
+            (and (eval myrddin-mode-identifier-rx)
+                 (zero-or-more whitespace)
+                 ?:
+                 (zero-or-more whitespace)))
         (group
          symbol-start
          (eval myrddin-mode-type-name-rx)
@@ -137,7 +137,8 @@
   `((,(regexp-opt myrddin-mode-keywords 'symbols) . font-lock-keyword-face)
     (,(regexp-opt myrddin-mode-constants 'symbols) . font-lock-constant-face)
     (,myrddin-mode-label-regexp . font-lock-constant-face)
-    (,myrddin-mode-type-specification-regexp 1 font-lock-type-face)
+    (,(rx (or ?{ "const" "var" "generic")) ,myrddin-mode-type-specification-regexp
+     nil nil (1 font-lock-type-face))
     (,myrddin-mode-variable-declaration-regexp 1 font-lock-variable-name-face)))
 
 
