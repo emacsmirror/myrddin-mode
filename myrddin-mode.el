@@ -93,7 +93,20 @@
 (defconst myrddin-mode-constants
   '("true" "false" "void"))
 
-(defvar myrddin-mode-variable-declaration-regexp
+(defvar myrddin-mode-block-keywords
+  '("elif" "else" "for" "if" "match" "struct" "trait" "while"))
+
+(defconst myrddin-mode-identifier-rx
+  '(and (or alpha ?_)
+        (zero-or-more (or alnum ?_))))
+
+(defconst myrddin-mode-type-name-rx
+  '(and
+    (eval myrddin-mode-identifier-rx)
+    (optional (or (and ?[ (zero-or-more any) ?])
+                  ?#))))
+
+(defconst myrddin-mode-variable-declaration-regexp
   (rx
    (and (or "const" "var" "generic")
         (zero-or-more (or "extern" "pkglocal" "#noret"))
