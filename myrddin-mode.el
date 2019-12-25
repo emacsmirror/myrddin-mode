@@ -119,12 +119,16 @@
 
 (defvar myrddin-mode-type-specification-regexp
   (rx
-   (and (or ?: "->")
+   (and (or ?{ "const" "var" "generic")
+        (zero-or-more (not newline))
+        (eval myrddin-mode-identifier-rx)
         (zero-or-more whitespace)
-        (group (or alpha ?_)
-               (one-or-more (or alnum ?_))
-               (optional (or (and ?\[ (zero-or-more any) ?\])
-                             ?#))))))
+        ?:
+        (zero-or-more whitespace)
+        (group
+         symbol-start
+         (eval myrddin-mode-type-name-rx)
+         symbol-end))))
 
 (defvar myrddin-mode-label-regexp
   (rx (and ?: (or alpha ?_) (one-or-more (or alnum ?_)) symbol-end)))
