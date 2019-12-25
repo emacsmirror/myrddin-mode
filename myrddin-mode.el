@@ -35,7 +35,7 @@
   :link '(url-link "https://git.sr.ht/~jakob/myrddin-mode")
   :group 'languages)
 
-(defcustom myrddin-indent-offset 8
+(defcustom myrddin-indent-offset 4
   "Indent Myrddin code by this number of spaces."
   :type 'integer
   :group 'myrddin
